@@ -1,0 +1,97 @@
+{% extends "baseb.html" %}
+{% block titulo_pagina %}Lista de Productos en Carrito{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="text-center bg-primary text-white py-3 mb-4 rounded">
+        <h2 class="mb-0">Lista de Productos en Carrito</h2>
+    </div>
+    
+    <a class="btn btn-sm btn-success mb-3" href="{{ url_for('auth.dashboard') }}">Regresar</a>
+    
+    <form action="{{ url_for('carrito.comprar') }}" method="post" enctype="multipart/form-data">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Seleccionar</th>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for itemcarrito in data %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="selected_items" 
+                                   value="{{ itemcarrito.productos.idproducto }}"
+                                   class="item-checkbox" />
+                        </td>
+                        <td>
+                            <img src="{{ url_for('static', filename='imagenes/' + itemcarrito.productos.get_img('img1')) }}"
+                                 alt="{{ itemcarrito.productos.nombre }}" class="img-thumbnail" width="80" height="80" />
+                        </td>
+                        <td>{{ itemcarrito.productos.nombre }}</td>
+                        <td>{{ itemcarrito.productos.idproducto }}</td>
+                        <td>{{ itemcarrito.productos.descripcion }}</td>
+                        <td>{{ itemcarrito.productos.categoria.nombre }}</td>
+                        <td class="precio">{{ itemcarrito.productos.precio }}</td>
+                        <td>
+                            <input type="number" class="cantidad form-control text-center" 
+                                   name="cantidad[{{ itemcarrito.productos.idproducto }}]" 
+                                   value="{{ itemcarrito.cantidad }}" min="1" disabled />
+                        </td>
+                        <td class="subtotal">{{ itemcarrito.productos.precio * itemcarrito.cantidad }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="mb-3">
+            <label for="observacion" class="form-label">Observaciones:</label>
+            <textarea class="form-control" id="observacion" name="observacion"></textarea>
+        </div>
+        
+        <h3 class="text-end">Total: <span id="total1">0</span></h3>
+        <input type="hidden" id="total" name="total">
+        <button type="submit" class="btn btn-primary w-100">Comprar</button>
+    </form>
+</div>
+
+<script>
+    function actualizarTotales() {
+        let total = 0;
+        document.querySelectorAll("tbody tr").forEach((row) => {
+            const checkbox = row.querySelector(".item-checkbox");
+            const precio = parseFloat(row.querySelector(".precio").textContent);
+            const cantidadInput = row.querySelector(".cantidad");
+            const subtotalElement = row.querySelector(".subtotal");
+
+            if (checkbox.checked) {
+                cantidadInput.disabled = false;
+                let cantidad = parseInt(cantidadInput.value);
+                let subtotal = precio * cantidad;
+                subtotalElement.textContent = subtotal.toFixed(2);
+                total += subtotal;
+            } else {
+                cantidadInput.disabled = true;
+                subtotalElement.textContent = "0.00";
+            }
+        });
+        
+        document.getElementById("total").value = total.toFixed(2);
+        document.getElementById("total1").textContent = total.toFixed(2);
+    }
+
+    document.querySelectorAll(".item-checkbox, .cantidad").forEach((element) => {
+        element.addEventListener("input", actualizarTotales);
+    });
+</script>
+{% endblock %}

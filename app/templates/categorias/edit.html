@@ -1,0 +1,19 @@
+{% extends "baseb.html" %}
+{% block titulo_pagina %}Editar categoria {% endblock %}
+{% block content %}
+<form action="{{ url_for('categorias.edit', id=datacat.idcategoria) }}" method="post">
+    <div class="form-group mb-3">
+        <label for="nameUser" class="form-label">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="{{ datacat.nombre }}" required class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="img1">Imagen de categoria:</label>
+        <input type="file" id="img1" name="img1" accept="image/*">
+    </div>
+    <br><br>
+    <button type="submit" class="btn btn-primary">Actualizar Categoria</button>
+    <a class="btn btn-sm btn-success mb-1" href="{{ url_for('categorias.index') }}">Cancelar</a>
+
+</form>
+
+{% endblock %}

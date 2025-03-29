@@ -1,0 +1,91 @@
+/* style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+a {
+    text-decoration: none;
+    color: #3498db;
+}
+
+a:hover {
+    color: #2980b9;
+}
+
+form {
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input[type="text"], input[type="password"], select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+.button1 {
+    background-color: #cc4b4b;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button1:hover {
+    background-color: #d11111;
+}
+
+.error-message {
+    color: #c0392b;
+    margin-bottom: 10px;
+}
+
+#authorBook{
+    color: #45a049;
+}

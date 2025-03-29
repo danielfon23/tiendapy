@@ -1,0 +1,39 @@
+{% extends "baseb.html" %}
+{% block titulo_pagina %}Detalle de la Compra{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1>Factura de Venta Nro: {{ datad[0].idventa if datad|length > 0 else '' }}</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Imagen</th>
+                <th>codigo producto</th>
+                <th>Categoría</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in datad %}
+            <tr>
+                <td>
+                    <img src="{{ url_for('static', filename='imagenes/' + item.productos.get_img('img1')) }}"
+                         alt="{{ item.productos.nombre }}" width="100" height="100" />
+                </td>
+                <td>{{ item.productos.idproducto }}</td>
+                <td>{{ item.productos.categoria.nombre }}</td>
+                <td>{{ item.productos.nombre }}</td>
+                <td>{{ item.productos.precio }}</td>
+                <td>{{ item.cantidad }}</td>
+                <td>{{ item.total }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a class="btn btn-primary btn-sm" href="{{ url_for('productos.add') }}">Imprimir</a>
+    <a class="btn btn-sm btn-success" href="{{ url_for('auth.dashboard') }}">Regresar</a>
+</div>
+{% endblock %}

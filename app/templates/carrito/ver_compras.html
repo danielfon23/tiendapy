@@ -1,0 +1,62 @@
+{% extends "baseb.html" %}
+{% block titulo_pagina %}Lista de Compras{% endblock %}
+{% block content %}
+<a class="btn btn-sm btn-success mb-1" href="{{ url_for('auth.dashboard') }}">Regresar</a>
+
+<div class="container mt-5">
+    <form method="post" enctype="multipart/form-data">
+        <table class="table">
+            <thead>
+              <tr>
+                  <th>Imagen</th>
+                  <th>Nro Factura</th>
+                  <th>Total</th>
+                  <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for itemcarrito in data %}
+              <tr>
+                  <td>
+                      {% if itemcarrito.ventas_d|length > 0 %}
+                          <img src="{{ url_for('static', filename='imagenes/' + itemcarrito.ventas_d[0].productos.get_img('img1')) }}"
+                               alt="{{ itemcarrito.ventas_d[0].productos.nombre }}" width="100" height="100" />
+                      {% else %}
+                          <p>No hay detalle de venta.</p>
+                      {% endif %}
+                  </td>
+                  <td>{{ itemcarrito.idventa }}</td>
+                  <td>{{ itemcarrito.total }}</td>
+                  <td>
+                      <!-- Botón para abrir el modal con el detalle de la venta -->
+                      <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#detalleModal{{ itemcarrito.idventa }}">
+                        Detalle
+                      </button>
+                      <a href="{{ url_for('carrito.imp_fact',id=itemcarrito.idventa) }}">imprimir</a>
+                  </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<!-- Modal: Se genera uno por cada venta si lo necesitas, usando el id de la venta para diferenciarlos -->
+{% for itemcarrito in data %}
+<div class="modal fade" id="detalleModal{{ itemcarrito.idventa }}" tabindex="-1" role="dialog" aria-labelledby="detalleModalLabel{{ itemcarrito.idventa }}" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+       <div class="modal-body">
+           <!-- Se incluye el contenido de detalle_venta.html y se puede pasar la variable correspondiente -->
+           {% with datad=itemcarrito.ventas_d %}
+             {% include 'carrito/detalle_venta.html' %}
+           {% endwith %}
+       </div>
+       <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+  
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}

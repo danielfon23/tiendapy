@@ -1,0 +1,100 @@
+<!-- Menú de Navegación -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">ComPuMoTos</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto">
+               <!-- tipousu = administrador -->
+                {% if datausu.tipousu == 1 %} 
+                    <!-- Usuarios -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle btn btn-primary" href="#" id="navbarUsuarios" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Usuarios
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarUsuarios">
+                            <li><a class="dropdown-item" href="{{ url_for('users.index') }}">Listado</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('users.add') }}">Agregar</a></li>
+                        </ul>
+                    </li>               
+                    <!-- Categorías -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle btn btn-primary" href="#" id="navbarCategorias" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Categorías
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarCategorias">
+                            <li><a class="dropdown-item" href="{{ url_for('categorias.index') }}">Listado</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('categorias.add') }}">Agregar</a></li>
+                        </ul>
+                    </li>
+                    <!-- Productos -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle btn btn-primary" href="#" id="navbarProductos" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Productos
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarProductos">
+                            <li><a class="dropdown-item" href="{{ url_for('productos.index') }}">Listado</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('productos.add') }}">Agregar</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+                <!-- Carrito -->
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary" href="{{ url_for('carrito.listarcarrito') }}">Carrito</a>
+                </li>
+                <!-- Compras Realizadas -->
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary" href="{{ url_for('carrito.vercompras') }}">Compras Realizadas</a>
+                </li>
+                <!-- Acerca de -->
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary" href="#">Acerca de...</a>
+                </li>
+            </ul>
+        
+            <!-- Foto de Perfil y Cerrar Sesión -->
+            <div class="d-flex align-items-center">
+                {% if datausu.imgper %}
+                <img src="{{ url_for('static', filename='imagenes/' + datausu.imgper) }}" 
+                    alt="Foto de {{ datausu.nameuser }}" class="rounded-circle me-2" width="50" height="50">
+                {% else %}
+                <img src="{{ url_for('static', filename='imagenes/usuario.bmp') }}" 
+                    alt="Imagen por defecto" class="rounded-circle me-2" width="50" height="50">
+                {% endif %}
+                <span class="text-white me-3">Usuario: {{ datausu.nameuser }}</span>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Cerrar sesión</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Estilos y Script para Animación -->
+<style>
+    /* Ajustar botones para que tengan el mismo tamaño */
+
+    /* Establece los enlaces en azul desde el inicio */
+.nav-link {
+    background-color: #5ea0ec; /* Azul de Bootstrap */
+    color: white !important;
+    padding: 15px 30px;
+    text-align: center;
+    border-radius: 5px;
+}
+    /* Botón que cambia de azul a verde al recibir focus en intervalos de 1 segundo */
+    @keyframes cambioColor {
+        0% { background-color: hwb(120 5% 1%); } /* Azul */
+        50% { background-color: hwb(64 5% 9% / 0.555); } /* Verde */
+        100% { background-color: #bdfd0d; } /* Azul */
+    }
+
+    .nav-link:focus {
+        animation: cambioColor 1s infinite;
+    }
+
+</style>

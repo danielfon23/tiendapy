@@ -1,0 +1,22 @@
+{% extends "baseb.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Agregar Categoria</h1>
+    <form action="{{ url_for('categorias.add') }}" method="post">
+        <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="img1">Imagen de categoria:</label>
+            <input type="file" id="img1" name="img1" accept="image/*">
+        </div>
+        <br><br>
+        <button type="submit" class="btn btn-primary">Agregar Categoria</button>
+        <a class="btn btn-sm btn-success mb-1" href="{{ url_for('categorias.index') }}">Cancelar</a>
+
+    </form>
+</div>
+{% endblock %}

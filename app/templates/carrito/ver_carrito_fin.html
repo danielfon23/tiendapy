@@ -1,0 +1,87 @@
+{% extends "baseb.html" %} 
+{% block titulo_pagina %}Lista de Productos en Carrito{% endblock %} 
+{% block content %}
+<a class="btn btn-sm btn-success mb-1" href="{{ url_for('auth.dashboard') }}">Regresar</a>
+<div class="container mt-5">
+    <form action="{{ url_for('carrito.comprar') }}" method="post" enctype="multipart/form-data">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Seleccionar</th>
+                    <th>Imagen</th>
+                    <th>Nombre</th>
+                    <th>Código</th>
+                    <th>Descripción</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for itemcarrito in data %}
+                <tr>
+                    <td>
+                        <input type="checkbox" 
+                               name="selected_items" 
+                               value="{{ itemcarrito.productos.idproducto }}"
+                               class="item-checkbox"
+                               data-precio="{{ itemcarrito.productos.precio }}" />
+                    </td>
+                    <td>
+                        <img src="{{ url_for('static', filename='imagenes/' + itemcarrito.productos.get_img('img1')) }}"
+                            alt="{{ itemcarrito.productos.nombre }}" width="100" height="100" />
+                    </td>
+                    <td>{{ itemcarrito.productos.nombre }}</td>
+                    <td>{{ itemcarrito.productos.idproducto }}</td>
+                    <td>{{ itemcarrito.productos.descripcion }}</td>
+                    <td>{{ itemcarrito.productos.categoria.nombre }}</td>
+                    <td class="precio">{{ itemcarrito.productos.precio }}</td>
+                    <td>
+                        <input type="number" class="cantidad" 
+                               name="cantidad[{{ itemcarrito.productos.idproducto }}]" 
+                               value="{{ itemcarrito.cantidad }}" min="1" disabled />
+                    </td>
+                    <td class="subtotal">{{ itemcarrito.productos.precio * itemcarrito.cantidad }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <label for="observacion">Observaciones:</label>
+        <input type="textarea" class="form-control" id="observacion" name="observacion">
+        <h3>Total: <span id="total1">0</span></h3>
+        <input type="hidden" id="total" name="total">
+        <button type="submit" class="btn btn-primary">Comprar</button>
+    </form>
+</div>
+<script>
+    function actualizarTotales() {
+        let total = 0;
+        document.querySelectorAll("tbody tr").forEach((row) => {
+            const checkbox = row.querySelector(".item-checkbox");
+            const precio = parseFloat(row.querySelector(".precio").textContent);
+            const cantidadInput = row.querySelector(".cantidad");
+            const subtotalElement = row.querySelector(".subtotal");
+
+            if (checkbox.checked) {
+                cantidadInput.disabled = false;
+                let cantidad = parseInt(cantidadInput.value);
+                let subtotal = precio * cantidad;
+                subtotalElement.textContent = subtotal.toFixed(2);
+                total += subtotal;
+            } else {
+                cantidadInput.disabled = true;
+                subtotalElement.textContent = "0.00";
+            }
+        });
+
+        document.getElementById("total").value = total.toFixed(2);
+        document.getElementById("total1").textContent = total.toFixed(2);
+    }
+
+    // Escuchar eventos de checkbox y cantidad
+    document.querySelectorAll(".item-checkbox, .cantidad").forEach((element) => {
+        element.addEventListener("input", actualizarTotales);
+    });
+</script>
+{% endblock %}

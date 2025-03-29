@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <title>Administrar Usuarios</title>
+</head>
+
+<body>
+    <h1>Agregar Usuario</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="flash-message alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <div class="flash-message alert alert-{{ category }}" id = "mensaje"></div>
+    <form action="{{ url_for('users.add') }}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nameuser" placeholder="Nombre usuario" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="claveuser">Clave:</label>
+            <input type="password" id="claveuser" name="claveuser" placeholder="contraseña" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="vclaveuser">Verifique su clave:</label>
+            <input type="password" id="vclaveuser" name="vclaveuser" placeholder="verifique su contraseña" required oninput="validarconcidencia(this)">
+        </div>
+
+    
+        <div class="form-group">
+            <input type="text" name="nombre" placeholder="Nombre Completo Usuario">
+        </div>
+
+        <div class="form-group">
+            <input type="text" name="telefono" placeholder="Teléfono">
+        </div>
+
+        <div class="form-group">
+            <input type="text" name="cedula" placeholder="Cédula" required>
+        </div>
+
+        <div class="form-group">
+            <input type="text" name="correo" placeholder="Correo">
+        </div>
+
+        <div class="form-group">
+            <label for="img1">Imagen de Perfil:</label>
+            <input type="file" id="img1" name="img1" accept="image/*">
+        </div>
+        <br><br>
+        <label for="tipousuario">tipo usuario:</label>
+        <select id="tipousu" name="tipousu"  class="form-select rounded-pill">
+                <option value= 1 >Administrador</option>
+                <option value= 2 >cliente</option>
+                <option value= 3 >Proveedor</option>
+        </select>
+
+        <br><br>
+        <button  type="submit">Agregar Usuario</button>
+        <a class="button1"  href="{{ url_for('users.index') }}">cancelar</a>
+
+
+    </form>
+
+    <script>
+        function validarconcidencia(input) {
+            console.log("Entra a la funcion");
+            const mensajeDiv = document.getElementById("mensaje");
+            if (input.value !== document.getElementById('claveuser').value) {
+                mensajeDiv.innerText = "Las contraseñas no coinciden.";
+                mensajeDiv.style.display = "block"; // Show the message
+                input.setCustomValidity('Las contraseñas no coinciden.');
+            } else {
+                mensajeDiv.innerText = "";
+                mensajeDiv.style.display = "none"; // Hide the message
+                input.setCustomValidity('');
+            }
+        }
+
+        function validarFormulario() {
+            const clave = document.getElementById('claveuser').value;
+            const verificarClave = document.getElementById('vclaveuser').value;
+
+            if (clave !== verificarClave) {
+                alert("Las contraseñas no coinciden.");
+                return false; // Prevent form submission
+            }
+            return true;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+{% extends "baseb.html" %}
+{% block titulo_pagina %}Lista de Usuarios{% endblock %}
+{% block content %}
+<a class="btn btn-primary btn-sm mb-1"href="{{ url_for('users.add') }}">Agregar Usuario</a>
+<a class="btn btn-sm btn-success mb-1"href="{{ url_for('auth.dashboard') }}">Regresar</a>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>nombre</th>
+        <th>clave</th>
+        <th>imagen perfil</th>
+        <th>acciones</th>
+    </tr>
+    {% for usuario in data %}
+    <tr>
+        <td>{{ usuario.iduser }}</td>
+        <td>{{ usuario.nameuser }}</td>
+        <td>{{ usuario.passworduser }}</td>
+        <td>{{ usuario.imgper }}</td>
+        <td>
+            <a href="{{ url_for('users.edit', id=usuario.iduser) }}">Editar</a>
+            <a href="{{ url_for('users.delete', id=usuario.iduser) }}">Eliminar</a>
+            {#<a href="{{ url_for('departamentos.list', id=depart.idDepartment) }}">Listar empleados</a>
+            #}
+            <!-- Agrega aquí el enlace para eliminar -->
+
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "baseb.html" %}
+{% block titulo_pagina %}Lista de Categorias{% endblock %}
+{% block content %}
+<a class="btn btn-primary btn-sm mb-1" href="{{ url_for('categorias.add') }}">Agregar Categoria</a>
+<a class="btn btn-sm btn-success mb-1" href="{{ url_for('auth.dashboard') }}">Regresar</a>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>nombre</th>
+        <th>img</th>
+    </tr>
+    {% for categoria in data %}
+    <tr>
+        <td>{{ categoria.idcategoria }}</td>
+        <td>{{ categoria.nombre }}</td>
+        <td>{{ categoria.img1 }}</td>
+        <td>
+            <a href="{{ url_for('categorias.edit', id=categoria.idcategoria) }}">Editar</a>
+            <a href="{{ url_for('categorias.delete', id=categoria.idcategoria) }}">Eliminar</a>
+            {# <a href="{{ url_for('departamentos.list', id=depart.idDepartment) }}">Listar empleados</a>
+            #}
+            <!-- Agrega aquí el enlace para eliminar -->
+
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

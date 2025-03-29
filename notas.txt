@@ -1,0 +1,37 @@
+https://flet.dev/docs/
+
+desarrollo en Python para dispositivos móviles 
+------------------
+pdg flask
+pip install reportlab
+pip install datetime 
+pip install pytz
+--------------------
+migrar datos de mysql a mysqllite
+chatgpt
+como el addcarrito es un modal quiero que cuando le de agregar carrito no me vuelva a cargar  el dasboard por que vuelve a cargarme los productos y quiero que se quede es en el registro del producto que estaba adicionando sin refrescar el index en la funcion add @bp.route('/carrito/add/<int:id>', methods=['GET', 'POST']) 
+@login_required
+def add(id):
+
+from sqlalchemy import create_engine, MetaData, Table, select
+
+# Conexión a MySQL
+engine_mysql = create_engine('mysql+pymysql://usuario:clave@host/base_mysql')
+# Conexión a SQLite
+engine_sqlite = create_engine('sqlite:///ruta/a/tu_sqlite.db')
+
+metadata = MetaData()
+
+# Ejemplo: sincronizar la tabla 'mi_tabla'
+mi_tabla = Table('mi_tabla', metadata, autoload_with=engine_mysql)
+
+# Extraer datos de MySQL
+with engine_mysql.connect() as conn_mysql:
+    resultados = conn_mysql.execute(select(mi_tabla)).fetchall()
+
+# Insertar datos en SQLite
+with engine_sqlite.connect() as conn_sqlite:
+    for fila in resultados:
+        # Convertir la fila a diccionario para el insert
+        conn_sqlite.execute(mi_tabla.insert().values(**fila._mapping))
+    conn_sqlite.commit()

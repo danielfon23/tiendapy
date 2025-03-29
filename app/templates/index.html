@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-icons.min.css') }}">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+
+    <!-- CSS Bootstrap 5 
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">-->
+    <style>
+        .card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            /* Hace que todas las cards tengan la misma altura */
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card p {
+            margin-bottom: 0px;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            /* Efecto de zoom */
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+            padding: 0px;
+        }
+
+        /* 📸 Asegurar imágenes del mismo tamaño */
+        .fixed-img {
+            width: 100%;
+            height: 200px;
+            /* Fijar altura para todas las imágenes */
+            object-fit: cover;
+            /* Recorta la imagen sin deformarla */
+        }
+
+        .modal-backdrop {
+            background-color: rgba(114, 29, 224, 0.5) !important;
+            /* Ajustar el fondo oscuro */
+        }
+
+        body.modal-open {
+            padding-right: 0 !important;
+            /* Evita el cambio de tamaño de la página */
+        }
+
+        .carousel-item img {
+            height: 200px;
+            /* Ajusta la altura según tus necesidades */
+            object-fit: cover;
+        }
+
+        .btn-custom-orange {
+            background-color: #ff8800;
+            /* Naranja personalizado */
+            color: white;
+            /* Texto en blanco */
+            border-radius: 12px;
+        }
+
+        .btn-custom-orange:hover {
+            background-color: blue;
+            /* Naranja más oscuro al pasar el mouse */
+        }
+    
+        .modal-header-reducido {
+            padding: 0PX;           
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'menu.html' %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="flash-message alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-cart"></i> Agregar al carrito
+    </button>
+
+
+    <div class="container mt-4">
+        <div class="row">
+            {% for producto in dataprod %}
+            <div class="col-md-3 d-flex align-items-stretch"> <!-- 6 columnas -->
+                <div class="card shadow-sm w-100">
+
+                    <img src="{{ url_for('static', filename='imagenes/' + producto.get_img('img1')) }}"
+                        class="card-img-top fixed-img" alt="{{ producto.nombre }}">
+                    <div class="card-body d-flex flex-column text-center">
+                        <h5 class="card-title">{{ producto.nombre }}</h5>
+                        <p class="card-text text-muted">Categoría: {{ producto.idcategoria }}</p>
+                        <h4 class="text-primary">$ {{ producto.precio }}</h4>
+                        <p class="card-text">{{ producto.descripcion }}</p>
+                        <p class="card-text"><strong> codigo:</strong> {{ producto.idproducto }}</p>
+                        <button type="button" class="btn-custom-orange mt-auto btn-sm btn-open-modal"
+                            data-id="{{ producto.idproducto }}">
+                            <i class="bi bi-cart"></i> Agregar al carrito
+                        </button>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row">
+            {% for producto in dataprod %}
+            <div class="col-md-3 d-flex align-items-stretch"> <!-- 6 columnas -->
+                <div class="card shadow-sm w-100">
+                    <img src="{{ url_for('static', filename='imagenes/' + producto.get_img('img1')) }}"
+                        class="card-img-top fixed-img" alt="{{ producto.nombre }}">
+                    <div class="card-body d-flex flex-column text-center">
+                        <h5 class="card-title">{{ producto.nombre }}</h5>
+                        <p class="card-text text-muted">Categoría: {{ producto.idcategoria }}</p>
+                        <h4 class="text-primary">$ {{ producto.precio }}</h4>
+                        <p class="card-text">{{ producto.descripcion }}</p>
+                        <a href="{{ url_for('carrito.add', id=producto.idproducto) }}" class="btn btn-primary mt-auto">
+                            Agregar al carrito
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+    <!-- Modal vacío que se llenará con AJAX -->
+    <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header modal-header-reducido">
+                    <h5 class="modal-title">Agregar al Carrito</h5>
+                  
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                
+                </div>
+                <div class="modal-body">
+                    <div id="modal-content">
+                        <!-- Aquí se cargará addcarrito.html dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let modal = new bootstrap.Modal(document.getElementById("detalleModal"));
+
+            document.querySelectorAll(".btn-open-modal").forEach(button => {
+                button.addEventListener("click", function () {
+                    let idProducto = this.getAttribute("data-id");
+                    let modalBody = document.getElementById("modal-content");
+
+                    modalBody.innerHTML = "<p class='text-center'>Cargando...</p>";
+
+                    fetch(`/carrito/add/${idProducto}`)
+                        .then(response => response.text())
+                        .then(data => {
+                            modalBody.innerHTML = data;
+                            modal.show();
+
+                            // Agregar evento al formulario dentro del modal
+                            let form = modalBody.querySelector("form");
+                            if (form) {
+                                form.addEventListener("submit", function (event) {
+                                    event.preventDefault(); // Evita que el formulario haga una recarga de página
+
+                                    let formData = new FormData(form);
+
+                                    fetch(form.action, {
+                                        method: "POST",
+                                        body: formData
+                                    })
+                                        .then(response => response.json())
+                                        .then(result => {
+                                            if (result.success) {
+                                                alert(result.message);
+                                                modal.hide();
+                                            } else {
+                                                alert("❌ Error al agregar al carrito");
+                                            }
+                                        })
+                                        .catch(error => console.error("Error:", error));
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error al cargar el modal:", error);
+                            modalBody.innerHTML = "<p class='text-center text-danger'>Error al cargar el producto.</p>";
+                        });
+                });
+            });
+
+            document.getElementById("detalleModal").addEventListener("hidden.bs.modal", function () {
+                document.body.classList.remove("modal-open");
+                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener1("DOMContentLoaded", function () {
+            let botones = document.querySelectorAll('[data-bs-toggle="modal"]');
+
+            botones.forEach(boton => {
+                boton.addEventListener("click", function () {
+                    // Elimina backdrop adicionales antes de abrir un modal nuevo
+                    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                    document.body.classList.remove('modal-open'); // Elimina la clase que bloquea el scroll
+                });
+            });
+        });
+    </script>
+    <script>
+        function cambiarCantidad(valor) {
+            let input = document.getElementById("cantidadInput");
+            let cantidad = parseInt(input.value) || 1; // Asegura que sea un número
+
+            cantidad += valor;
+
+            if (cantidad < 1) {
+                cantidad = 1; // No permitir cantidades menores a 1
+            }
+
+            input.value = cantidad;
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
